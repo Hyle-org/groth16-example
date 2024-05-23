@@ -83,7 +83,6 @@ func simpleMain() {
 	f.Write(hyle_proof_marshalled)
 
 	fmt.Println("Proof generated and saved to simple_proof.json")
-	fmt.Println("Starting state: 4")
 	fmt.Println("Verifying key:", base64.StdEncoding.EncodeToString(hyle_proof.VerifyingKey))
 	fmt.Println("Verify with hyled tx zktx verify")
 }
@@ -108,9 +107,13 @@ func collatzMain() {
 	f, _ := os.Create("collatz_proof.json")
 	f.Write(hyle_proof_marshalled)
 
+	parsedData, _ := hyle_proof.ExtractData(witness)
+
 	fmt.Println("Proof generated and saved to collatz_proof.json")
+	fmt.Println("Initial state:", base64.StdEncoding.EncodeToString(parsedData.InitialState))
 	fmt.Println("Verifying key:", base64.StdEncoding.EncodeToString(hyle_proof.VerifyingKey))
-	fmt.Println("Verify with hyled tx zktx verify")
+	fmt.Println("Register the contract with `hyled tx zktx register [your address] collatz gnark-groth16-te-BN254 [verifying key] [initial state]`")
+	fmt.Println("Execute a state transition with `hyled tx zktx execute toto.collatz collatz [path to collatz_proof.json] --from [your address]`")
 }
 
 func main() {
