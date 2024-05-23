@@ -64,22 +64,45 @@ func GenerateProof(ccs constraint.ConstraintSystem, witness witness.Witness, pk 
 	}, nil
 }
 
+// This function exists to preserve private keys across runs
+func loadCircuit(path string, circuit frontend.Circuit) (constraint.ConstraintSystem, groth16.ProvingKey, groth16.VerifyingKey, error) {
+	// Read from file
+	f, err := os.Open(path)
+	if err != nil {
+		// Create a new circuit
+		css, pk, vk := Setup(circuit)
+		// Serialize it as an example and so the pk/vk don't change
+		var buf bytes.Buffer
+		pk.WriteTo(&buf)
+		vk.WriteTo(&buf)
+		// There appears to be a bug in gnark 0.9 where readFrom reads too many bytes here, likely fixed in >= 0.11
+		// So I'll put this last
+		css.WriteTo(&buf)
+		f, _ := os.Create(path)
+		f.Write(buf.Bytes())
+		return css, pk, vk, nil
+	} else {
+		pk := groth16.NewProvingKey(ecc.BN254)
+		pk.ReadFrom(f)
+		vk := groth16.NewVerifyingKey(ecc.BN254)
+		vk.ReadFrom(f)
+		css := groth16.NewCS(ecc.BN254)
+		css.ReadFrom(f)
+		return css, pk, vk, nil
+	}
+}
+
 func simpleMain() {
-	// Create a new circuit
-	css, pk, vk := Setup(&SimpleCircuit{})
-	// Serialize it as an example
-	var buf bytes.Buffer
-	css.WriteTo(&buf)
-	pk.WriteTo(&buf)
-	vk.WriteTo(&buf)
-	f, _ := os.Create("simple_circuit.bin")
-	f.Write(buf.Bytes())
+	css, pk, vk, err := loadCircuit("simple_circuit.bin", &SimpleCircuit{})
+	if err != nil {
+		panic(err)
+	}
 
 	witness, _ := (&SimpleCircuit{}).CreateWitness(4)
 	hyle_proof, _ := GenerateProof(css, witness, pk, vk)
 
 	hyle_proof_marshalled, _ := json.Marshal(hyle_proof)
-	f, _ = os.Create("simple_proof.json")
+	f, _ := os.Create("simple_proof.json")
 	f.Write(hyle_proof_marshalled)
 
 	fmt.Println("Proof generated and saved to simple_proof.json")
@@ -88,8 +111,7 @@ func simpleMain() {
 }
 
 func collatzMain() {
-	// Create a new circuit
-	css, pk, vk := Setup(&CollatzCircuit{
+	css, pk, vk, err := loadCircuit("collatz_circuit.bin", &CollatzCircuit{
 		HyleCircuit: gnark.HyleCircuit{
 			// We need to specify the lengths of the arrays
 			Input:  []frontend.Variable{1},
@@ -99,6 +121,9 @@ func collatzMain() {
 			Sender: uints.NewU8Array([]byte("toto.collatz")),
 		},
 	})
+	if err != nil {
+		panic(err)
+	}
 
 	witness, _ := (&CollatzCircuit{}).CreateResetWitness(4, "toto.collatz")
 	hyle_proof, _ := GenerateProof(css, witness, pk, vk)
