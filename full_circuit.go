@@ -4,7 +4,6 @@ import (
 	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark/backend/witness"
 	"github.com/consensys/gnark/frontend"
-	"github.com/consensys/gnark/std/math/uints"
 	"github.com/hyle-org/hyle/x/zktx/keeper/gnark"
 )
 
@@ -33,7 +32,7 @@ func (circuit *CollatzCircuit) Define(api frontend.API) error {
 	return nil
 }
 
-func (circuit *CollatzCircuit) CreateResetWitness(resetTo int, sender string) (witness.Witness, error) {
+func (circuit *CollatzCircuit) CreateResetWitness(resetTo int, origin string) (witness.Witness, error) {
 	assignment := CollatzCircuit{
 		HyleCircuit: gnark.HyleCircuit{
 			Version:   1,
@@ -41,14 +40,13 @@ func (circuit *CollatzCircuit) CreateResetWitness(resetTo int, sender string) (w
 			Input:     []frontend.Variable{1},
 			OutputLen: 1,
 			Output:    []frontend.Variable{resetTo},
-			SenderLen: len(sender),
-			Sender:    uints.NewU8Array([]byte(sender)),
+			OriginLen: len(origin),
+			Origin:    gnark.ToArray256([]byte(origin)),
 			CallerLen: 0,
-			Caller:    nil,
+			Caller:    gnark.ToArray256([]byte{}),
 			BlockTime: 0,
 			BlockNb:   0,
-			TxHashLen: 0,
-			TxHash:    nil,
+			TxHash:    gnark.ToArray64([]byte("TODO")),
 		},
 	}
 
@@ -59,7 +57,7 @@ func (circuit *CollatzCircuit) CreateResetWitness(resetTo int, sender string) (w
 	return w, nil
 }
 
-func (circuit *CollatzCircuit) CreateNextWitness(current int, sender string) (witness.Witness, error) {
+func (circuit *CollatzCircuit) CreateNextWitness(current int, origin string) (witness.Witness, error) {
 	next := 0
 	if current == 1 {
 		next = 1
@@ -77,14 +75,13 @@ func (circuit *CollatzCircuit) CreateNextWitness(current int, sender string) (wi
 			Input:     []frontend.Variable{current},
 			OutputLen: 1,
 			Output:    []frontend.Variable{next},
-			SenderLen: len(sender),
-			Sender:    uints.NewU8Array([]byte(sender)),
+			OriginLen: len(origin),
+			Origin:    gnark.ToArray256([]byte(origin)),
 			CallerLen: 0,
-			Caller:    nil,
+			Caller:    gnark.ToArray256([]byte{}),
 			BlockTime: 0,
 			BlockNb:   0,
-			TxHashLen: 0,
-			TxHash:    nil,
+			TxHash:    gnark.ToArray64([]byte("TODO")),
 		},
 	}
 

@@ -13,7 +13,6 @@ import (
 	"github.com/consensys/gnark/constraint"
 	"github.com/consensys/gnark/frontend"
 	"github.com/consensys/gnark/frontend/cs/r1cs"
-	"github.com/consensys/gnark/std/math/uints"
 	"github.com/hyle-org/hyle/x/zktx/keeper/gnark"
 )
 
@@ -116,9 +115,6 @@ func collatzMain() {
 			// We need to specify the lengths of the arrays
 			Input:  []frontend.Variable{1},
 			Output: []frontend.Variable{1},
-			// NB: the sender length is hardcoded here, which is poor.
-			// We'll need to update Hylé to have a max-length instead, most likely.
-			Sender: uints.NewU8Array([]byte("toto.collatz")),
 		},
 	})
 	if err != nil {
