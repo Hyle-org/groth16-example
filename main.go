@@ -121,7 +121,7 @@ func collatzMain() {
 		panic(err)
 	}
 
-	witness, _ := (&CollatzCircuit{}).CreateResetWitness(4, "toto.collatz")
+	witness, _ := (&CollatzCircuit{}).CreateResetWitness(4)
 	hyle_proof, _ := GenerateProof(css, witness, pk, vk)
 
 	hyle_proof_marshalled, _ := json.Marshal(hyle_proof)
