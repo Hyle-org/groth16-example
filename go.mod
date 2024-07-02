@@ -7,7 +7,7 @@ toolchain go1.21.5
 require (
 	github.com/consensys/gnark v0.9.1
 	github.com/consensys/gnark-crypto v0.12.2-0.20231013160410-1f65e75b6dfb
-	github.com/hyle-org/hyle/x/zktx v0.0.0-20240523142620-956e76dc6299
+	github.com/hyle-org/hyle/x/zktx v0.0.0-20240702130552-6d462f2a3bfe
 )
 
 require (

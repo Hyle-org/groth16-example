@@ -35,18 +35,14 @@ func (circuit *CollatzCircuit) Define(api frontend.API) error {
 func (circuit *CollatzCircuit) CreateResetWitness(resetTo int, origin string) (witness.Witness, error) {
 	assignment := CollatzCircuit{
 		HyleCircuit: gnark.HyleCircuit{
-			Version:   1,
-			InputLen:  1,
-			Input:     []frontend.Variable{1},
-			OutputLen: 1,
-			Output:    []frontend.Variable{resetTo},
-			OriginLen: len(origin),
-			Origin:    gnark.ToArray256([]byte(origin)),
-			CallerLen: 0,
-			Caller:    gnark.ToArray256([]byte{}),
-			BlockTime: 0,
-			BlockNb:   0,
-			TxHash:    gnark.ToArray64([]byte("TODO")),
+			Version:     1,
+			InputLen:    1,
+			Input:       []frontend.Variable{1},
+			OutputLen:   1,
+			Output:      []frontend.Variable{resetTo},
+			IdentityLen: len(origin),
+			Identity:    gnark.ToArray256([]byte(origin)),
+			TxHash:      gnark.ToArray64([]byte("TODO")),
 		},
 	}
 
@@ -70,18 +66,14 @@ func (circuit *CollatzCircuit) CreateNextWitness(current int, origin string) (wi
 	}
 	assignment := CollatzCircuit{
 		HyleCircuit: gnark.HyleCircuit{
-			Version:   1,
-			InputLen:  1,
-			Input:     []frontend.Variable{current},
-			OutputLen: 1,
-			Output:    []frontend.Variable{next},
-			OriginLen: len(origin),
-			Origin:    gnark.ToArray256([]byte(origin)),
-			CallerLen: 0,
-			Caller:    gnark.ToArray256([]byte{}),
-			BlockTime: 0,
-			BlockNb:   0,
-			TxHash:    gnark.ToArray64([]byte("TODO")),
+			Version:     1,
+			InputLen:    1,
+			Input:       []frontend.Variable{current},
+			OutputLen:   1,
+			Output:      []frontend.Variable{next},
+			IdentityLen: len(origin),
+			Identity:    gnark.ToArray256([]byte(origin)),
+			TxHash:      gnark.ToArray64([]byte("TODO")),
 		},
 	}
 
